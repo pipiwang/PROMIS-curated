@@ -26,7 +26,17 @@ example command lines 2
 ```
 ### List of clinical report entry description
 Q: do we need a table here to explain the xlsx sheets?
-
-## Preprocessing tools
+<!-- 
+## Preprocessing tools -->
 
 ## Diagnostic Accuracy Analysis
+To reproduce the main analysis results presented in the paper:
+
+1. **Specify Configuration**  
+   Define all required variables and directory paths in the `config.py` file. This includes paths to the dataset, output directories, and any relevant parameters.
+
+2. **Run Analysis**  
+   Execute the main analysis script:
+
+   ```bash
+   python localised_analysis.py
