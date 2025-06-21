@@ -65,9 +65,9 @@ def get_tpm_cancer_info(tpm, cancer_def_rules):
     return t_zone_wc, t_cancer_info
 
 
-def load_localised_mask(pid, zone_config, suffix=""):
+def load_localised_mask(pid, zone_config, localised_level=20):
     """Load zone masks for a given patient and localised level."""
-    file_path = os.path.join(nii_dir, pid, f'gland_zone_{zone_config}{suffix}.nii.gz')
+    file_path = os.path.join(nii_dir, pid, f'gland_zone_{localised_level}level_{zone_config}.nii.gz')
     if os.path.exists(file_path):
         return nib.load(file_path).get_fdata()
     return None
@@ -75,7 +75,7 @@ def load_localised_mask(pid, zone_config, suffix=""):
 
 def load_mri_lesion_mask(pid):
     """Load MRI lesion mask. Default using a1 mask."""
-    file_path = os.path.join(nii_dir, pid, 'l_a1.nii.gz')
+    file_path = os.path.join(nii_dir, pid, 'lesion_a1.nii.gz')
     if os.path.exists(file_path):
         return nib.load(file_path).get_fdata()
     return None

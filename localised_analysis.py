@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import tqdm
 import random
-from utils import *
+from utils.stat_utils import *
 from config import *
 
 # Helper function to calculate ratio of intersection for multi-level zones
@@ -17,14 +17,14 @@ def calculate_ratio(multi_zone_dict, big_zone_mask, bar_zone_mask, ratio_dict):
     return ratio_dict
     
 
-def run_analysis_for_zone_level(zone_level: int):
+def run_analysis_for_localised_level(localised_level: int):
     """
     Runs the analysis for a specified zone level (2, 4, 8, or 20).
 
     Args:
-        zone_level (int): The zone level to perform analysis for (2, 4, 8, or 20).
+        localised_level (int): The zone level to perform analysis for (2, 4, 8, or 20).
     """
-    print(f"\n--- Running Analysis for {zone_level}-Zone Level ---")
+    print(f"\n--- Running Analysis for {localised_level}-Zone Level ---")
     random.seed(42) # Ensure reproducibility
 
     patient_ids = load_patient_ids()
@@ -32,18 +32,14 @@ def run_analysis_for_zone_level(zone_level: int):
     rules = load_rules()
 
     # --- Zone Level Specific Configurations ---
-    zone_suffix = ""
     num_zones = 20
-    tpm_zone_map_config = None # Holds mapping dictionaries for 4 or 8 zone
-    zone_level_filename_part = "zone_level" # For the output Excel filename
+    tpm_zone_map_config = None # Holds mapping dictionaries for 2, 4 or 8 zone
     
-    if zone_level == 20:
-        zone_suffix = ""
+    if localised_level == 20:
         num_zones = 20
-        zone_level_filename_part = "zone_level"
+        zone_level_filename_part = "barzell_zone_level"
         
-    elif zone_level == 8:
-        zone_suffix = "_8"
+    elif localised_level == 8:
         num_zones = 8
         zone_level_filename_part = "8_level"
         # Pre-calculate reverse and group mappings for 8-zone
@@ -67,8 +63,7 @@ def run_analysis_for_zone_level(zone_level: int):
             "half_map": half_map,
             "quarter_map": quarter_map,
         }
-    elif zone_level == 4:
-        zone_suffix = "_4"
+    elif localised_level == 4:
         num_zones = 4
         zone_level_filename_part = "4_level"
         # Pre-calculate reverse and group mappings for 4-zone
@@ -86,15 +81,14 @@ def run_analysis_for_zone_level(zone_level: int):
             "reverse_map": reverse_map,
             "half_map": half_map,
         }
-    elif zone_level == 2:
-        zone_suffix = "_2"
+    elif localised_level == 2:
         num_zones = 2
         zone_level_filename_part = "2_level"
         # Pre-calculate reverse and group mappings for 2-zone
-        reverse_map = {v: k for k, values in quadrant_zone.items() for v in values}
+        reverse_map = {v: k for k, values in hemi_zone.items() for v in values}
         half_map = {zone: [] for zone in hemi_half_zone}
         for zone_id_20 in hemi_half_zone:
-            for k, v in quadrant_zone.items():
+            for k, v in hemi_zone.items():
                 if zone_id_20 in v:
                     half_map[zone_id_20].append(k)
         # Remove half zones from reverse_map
@@ -106,7 +100,7 @@ def run_analysis_for_zone_level(zone_level: int):
             "half_map": half_map,
         }
     else:
-        raise ValueError("Invalid zone_level. Must be 2, 4, 8, or 20.")
+        raise ValueError("Invalid localised_level. Must be 2, 4, 8, or 20.")
 
     for zone_config in current_zone_configs:
         log_dict_array_for_current_file = []
@@ -120,8 +114,8 @@ def run_analysis_for_zone_level(zone_level: int):
 
                 for pid in tqdm.tqdm(patient_ids, desc="    Patients"):
                     # Load zone masks (current level and 20 barzell zones for calculating ratios)
-                    zone_arr_current_level = load_localised_mask(pid, zone_config, suffix=zone_suffix)
-                    zone_arr_20 = load_localised_mask(pid, zone_config, suffix="") # Always needed for ratio calcs
+                    zone_arr_current_level = load_localised_mask(pid, zone_config, localised_level)
+                    zone_arr_20 = load_localised_mask(pid, zone_config, ) # Always needed for ratio calcs
                     if zone_arr_current_level is None or zone_arr_20 is None:
                         print(f"    Skipping patient {pid}: Missing zone mask files.")
                         continue
@@ -146,7 +140,7 @@ def run_analysis_for_zone_level(zone_level: int):
                     
                     # Append MRI lesion status, applying sampling if relevant
                     mri_les_all_patients.append(mri_les_level_specific)
-                    if zone_level in [2, 4, 8]:
+                    if localised_level in [2, 4, 8]:
                         for _ in range(sample_times - 1):
                             mri_les_all_patients.append(mri_les_level_specific)
 
@@ -159,12 +153,12 @@ def run_analysis_for_zone_level(zone_level: int):
                     # Calculate ratios for 4/8 zone if applicable (used for probabilistic mapping)
                     half_ratio_dict = {}
                     quarter_ratio_dict = {}
-                    if zone_level == 8:
+                    if localised_level == 8:
                         half_ratio_dict = {k:{v:None for v in vs} for k,vs in tpm_zone_map_config["half_map"].items()}
                         half_ratio_dict = calculate_ratio(tpm_zone_map_config["half_map"], zone_arr_current_level, zone_arr_20, half_ratio_dict)
                         quarter_ratio_dict = {k:{v:None for v in vs} for k,vs in tpm_zone_map_config["quarter_map"].items()}
                         quarter_ratio_dict = calculate_ratio(tpm_zone_map_config["quarter_map"], zone_arr_current_level, zone_arr_20, quarter_ratio_dict)
-                    elif zone_level == 4 or zone_level == 2:
+                    elif localised_level == 4 or localised_level == 2:
                         half_ratio_dict = {k:{v:None for v in vs} for k,vs in tpm_zone_map_config["half_map"].items()}
                         half_ratio_dict = calculate_ratio(tpm_zone_map_config["half_map"], zone_arr_current_level, zone_arr_20, half_ratio_dict)
 
@@ -174,7 +168,7 @@ def run_analysis_for_zone_level(zone_level: int):
                         t_zone_wc_20_level, t_cancer_info_20_level = get_tpm_cancer_info(tpm, cancer_def_rules)
                         curr_zone_wc_20_level = [zone for zone in t_zone_wc_20_level if t_cancer_info_20_level[zone] == '1']
                         
-                        if zone_level == 20: # Direct mapping for 20-zone
+                        if localised_level == 20: # Direct mapping for 20-zone
                             tpm_les_level_specific = np.zeros(num_zones)
                             for zone_id_20 in curr_zone_wc_20_level:
                                 tpm_les_level_specific[zone_id_20 - 1] = 1
@@ -187,7 +181,7 @@ def run_analysis_for_zone_level(zone_level: int):
                                         new_zone_id_mapped = None
                                         if zone_id_20 in tpm_zone_map_config["half_map"]:
                                             new_zone_id_mapped = random.choice(tpm_zone_map_config["half_map"][zone_id_20])
-                                        elif zone_level == 8 and zone_id_20 in tpm_zone_map_config["quarter_map"]: # for 8-zone quarter mapping only
+                                        elif localised_level == 8 and zone_id_20 in tpm_zone_map_config["quarter_map"]: # for 8-zone quarter mapping only
                                             rand_num = random.random()
                                             q_zones = tpm_zone_map_config["quarter_map"][zone_id_20]
                                             ordered_ratios = np.array([quarter_ratio_dict[zone_id_20][qz] for qz in q_zones])
@@ -198,7 +192,7 @@ def run_analysis_for_zone_level(zone_level: int):
                                             new_zone_id_mapped = q_zones[selected_zone_index]
                                             # if new_zone_id_mapped is None and q_zones: # Fallback for edge cases with float precision
                                             #     new_zone_id_mapped = q_zones[-1]
-                                        else: # Direct mapping from 20-zone to 4/8 zone
+                                        else: # Direct mapping from 20-zone to 2/4/8 zone
                                             new_zone_id_mapped = tpm_zone_map_config["reverse_map"].get(zone_id_20)
                                             
                                         if new_zone_id_mapped is not None:
@@ -251,7 +245,7 @@ def run_analysis_for_zone_level(zone_level: int):
 
 if __name__ == "__main__":
     # Define which zone levels to run the analysis for
-    zone_levels_to_run = [8, 4] 
-    # zone_levels_to_run = [2, 20]
-    for level in zone_levels_to_run:
-        run_analysis_for_zone_level(level)
+    localised_levels_to_run = [ 20, 8, 4, 2] 
+    # localised_levels_to_run = [2, ]
+    for level in localised_levels_to_run:
+        run_analysis_for_localised_level(level)

@@ -2,9 +2,9 @@ import numpy as np
 import os
 
 root_dir = '/Users/wangyipei/Library/CloudStorage/OneDrive-UniversityCollegeLondon/promis'
-nii_dir = os.path.join(root_dir,'nii_new') # image directory
+nii_dir = os.path.join(root_dir,'MRI') # image directory
 mri_report_dir = os.path.join(root_dir, 'Cleaned_Spreadsheets', 'PROMIS_OA_MRI_cleaned.xlsx') # MRI report directory
-tpm_report_dir = os.path.join(root_dir, 'Cleaned_Spreadsheets', 'TPM_Data_all') # TPM report directory
+tpm_report_dir = os.path.join(root_dir, 'Cleaned_Spreadsheets', 'Template_biopsy') # TPM report directory
 
 # Excluded Patient IDs
 excluded_pids = ['P-14794814', 'P-81927032', 'P-50311284', 'P-53294571', 'P-31906541']
@@ -57,7 +57,7 @@ iou_thresholds = [np.finfo(float).tiny, 1e-5, 1e-3, 1e-2, 5e-2, 1e-1]
 # iou_thresholds = [np.finfo(float).tiny,]
 
 # PIRADS thresholds
-# pirads_thresholds = [2,3,4,5] 
-pirads_thresholds = [3]
+pirads_thresholds = [2,3,4,5] 
+# pirads_thresholds = [3]
 
 current_zone_configs = ['set1',]
