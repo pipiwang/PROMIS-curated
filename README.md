@@ -29,7 +29,14 @@ Q: do we need a table here to explain the xlsx sheets?
 <!-- 
 ## Preprocessing tools -->
 
-## Diagnostic Accuracy Analysis
+## Generating localised zones on the prostate mask
+To generate localised zones of different granularity, run the following script:
+
+  ```bash
+  python gen_localised_zones.py
+  ```
+
+## Diagnostic Accuracy Analysiss
 To reproduce the main analysis results presented in the paper:
 
 1. **Specify Configuration**  
@@ -40,3 +47,4 @@ To reproduce the main analysis results presented in the paper:
 
    ```bash
    python localised_analysis.py
+   ```
