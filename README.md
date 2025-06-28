@@ -2,15 +2,15 @@
 # Localization of clinically significant prostate cancer on multiparametric MR: an open reproducible analysis on the digitalized PROMIS dataset
 
 Welcome to the repository for the fully digitalised open-source PROMIS study, along with the preprocessing tools and code for reproducing the quantitative analysis for two studies:
-- A patient-level diagnostic accuracy described in the original paper [[Ahmed et al 2017, Diagnostic accuracy of multi-parametric MRI and TRUS biopsy in prostate cancer (PROMIS): a paired validating confirmatory study]](https://doi.org/10.1016/S0140-6736(16)32401-1), and
-- A follow-up analysis on quantifying zone-level and lesion-level localization accuracy: [Wang et al 2025, Localization of clinically significant prostate cancer on multiparametric MR: an open reproducible analysis on the digitalized PROMIS dataset] (currently under-review).
+- A patient-level diagnostic accuracy described in the original paper [[Ahmed et al 2017]](https://doi.org/10.1016/S0140-6736(16)32401-1), Diagnostic accuracy of multi-parametric MRI and TRUS biopsy in prostate cancer (PROMIS): a paired validating confirmatory study, and
+- A follow-up analysis on quantifying zone-level and lesion-level localization accuracy: [[Wang et al 2025]](https://currently-under-review), Localization of clinically significant prostate cancer on multiparametric MR: an open reproducible analysis on the digitalized PROMIS dataset.
 
 ## What's included
 - **PROMIS dataset**: An open-source fully digitalised dataset curated from the PROMIS study, including aligned radiological and histopathological labels.
-- **Preprocessing tools**: Tools to prepare the dataset for subsequent automated, quantitative analysis (including machine learning tasks). 
-- **Diagnostic accuracy analysis**: Code to reproduce the main results reported in the above two papers with their statistical analysis.
+- **Preprocessing tools**: Tools to prepare the dataset for subsequent automated quantitative localisation analysis and potentially machine learning tasks. 
+- **Diagnostic accuracy analysis**: Code to reproduce the main results reported in the above two studies with their statistical analysis.
 
-## PROMIS Dataset 
+## The PROMIS dataset 
 ### Overview
 | Item | Description |
 | ---- | ----------- |
@@ -27,24 +27,24 @@ example command line 1
 example command lines 2
 ```
 ### List of clinical report entry description
-Q: do we need a table here to explain the xlsx sheets?
+A brief description of the downloaded data here
 <!-- 
 ## Preprocessing tools -->
 
-## Generating localised zones on the prostate mask
-To generate localised zones of different granularity, run the following script:
+## Generating local zones on the prostate masks
+To generate local zones of different granularity, including hemi, quadrant, octant and Bazell zones, run the following script:
 
   ```bash
   python gen_localised_zones.py
   ```
 
-## Diagnostic Accuracy Analysiss
-To reproduce the main analysis results presented in the paper:
+## Diagnostic accuracy at patient-level and zone-levels
+To compute the main analysis results:
 
-1. **Specify Configuration**  
+1. **Specify configuration**  
    Define all required variables and directory paths in the `config.py` file. This includes paths to the dataset, output directories, and any relevant parameters.
 
-2. **Run Analysis**  
+2. **Run analysis**  
    Execute the main analysis script:
 
    ```bash
