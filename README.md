@@ -14,22 +14,13 @@ Welcome to the repository for the fully digitalised open-source PROMIS study, al
 ### Overview
 | Item | Description |
 | ---- | ----------- |
-| Data Modality | T2-weighted, High-b DWI, ADC |
-| Data Format | NifTi |
-| Annotations | Lesion countours, prostate gland mask |
+| Image Data Modality | T2-weighted, High-b DWI, ADC |
+| Image Data Format | NifTi |
+| Image Annotations | Lesion countours, prostate gland mask |
 | Clinical report | Template biopsy report, radiologist readings |
 
 ### Download
-You can download the dataset [here](https://exampleurl) by running the following commands:
-
-```
-example command line 1
-example command lines 2
-```
-### List of clinical report entry description
-A brief description of the downloaded data here
-<!-- 
-## Preprocessing tools -->
+You can download the dataset [here](10.5281/zenodo.15683922).
 
 ## Generating local zones on the prostate masks
 To generate local zones of different granularity, including hemi, quadrant, octant and Bazell zones, run the following script:
