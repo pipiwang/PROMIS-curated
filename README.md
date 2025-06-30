@@ -20,7 +20,7 @@ Welcome to the repository for the fully digitalised open-source PROMIS study, al
 | Clinical report | Template biopsy report, radiologist readings |
 
 ### Download
-You can download the dataset [here](https://anonymous-url).
+You can download the dataset [here](https://zenodo.org/records/15683922).
 
 ## Generating local zones on the prostate masks
 To generate local zones of different granularity, including hemi, quadrant, octant and Bazell zones, run the following script:
